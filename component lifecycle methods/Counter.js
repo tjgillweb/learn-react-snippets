@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 class Counter extends Component {
     constructor(props) {
         console.log("Constructor");
@@ -6,6 +7,16 @@ class Counter extends Component {
         this.state = { 
             counter: 0
          }
+         this.increment = () => this.setState({counter: this.state.counter + 1});
+         this.decrement = () => this.setState({counter: this.state.counter - 1});
+    }
+    static getDerivedStateFromProps(props, state){
+        console.log('getDerivedStateFromProps')
+        return null
+    }
+    componentDidMount(){
+        console.log("ComponentDidMount")
+        console.log("--------------------------------")
     }
     render() { 
         console.log("Render");
@@ -14,6 +25,8 @@ class Counter extends Component {
                 <div className="counter">
                     <h2>Counter: {this.state.counter}</h2>
                 </div>
+                <button onClick={this.increment}>Increment</button>
+                <button onClick={this.decrement}>Decrement</button>
             </div>
          );
     }
