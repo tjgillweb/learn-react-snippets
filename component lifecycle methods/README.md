@@ -97,3 +97,26 @@ export default Counter;
 ```
 
 ![](img/mounting_lifecycle.gif)
+---------------------------------------------------------------------------------------------------------------------------------------
+## Component Updating Lifecycle Methods
+### 1. static getDerivedStateFromProps(props,state)
+- This method is called every time a component is re-rendered.
+- **DO:** Set the state
+- **DON'T:** Cause side effects
+- rarely used method in the updating phase
+
+### 2. shouldComponentUpdate(nextProps, nextState)
+- This method receives the updated props and state
+- Dictates if the component should re-render or not.
+- By default all class components will re-render whenever the props they receive or their state changes. This method can prevent that default behaviour by returning false.
+- We can compare the existing props and state values with the next props and state values and return true or false to let React know whether the component should update or not.
+- This method is basically for performance optimization.
+- **DON'T:** Cause side effects or call the setState() method.
+- rarely used lifecycle method.
+
+### 3. render()
+- same description as in mounting lifecycle methods
+
+### 4. getSnapshotBeforeUpdate(prevProps, prevState)
+- called right before the changes from the virtual DOM are to be reflected in the DOM.
+- **DO:** Capture some information from the DOM. Example: Read the
