@@ -39,6 +39,16 @@ class Counter extends Component {
         return true;
     }
 
+    getSnapshotBeforeUpdate(prevProps, prevState){
+        console.log('getSnapshotBeforeUpdate')
+        return null
+    }
+    
+    componentDidUpdate(prevProps, prevState, snapshot){
+        console.log('componentDidUpdate')
+        console.log("--------------------------------")
+    }
+
     render() { 
         console.log("Render");
         return ( 
