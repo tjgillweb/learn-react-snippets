@@ -3,6 +3,9 @@
 **Resources:**  
 1. [https://blog.pusher.com/beginners-guide-react-component-lifecycle/](https://blog.pusher.com/beginners-guide-react-component-lifecycle/).
 2. [Youtube: ReactJS Tutorial Codevolution](https://www.youtube.com/watch?v=qnN_FuFNq2g&list=PLC3y8-rFHvwgg3vaYJgHGnModB54rxOk3&index=22)
+3. [React Component Lifecycle - Hooks / Methods Explained](https://www.youtube.com/watch?v=m_mtV4YaI8c&t=1289s)
+
+![](img/full-component-lifecycle.gif)
 
 ![](img/lifecycle-methods1.png)
 
@@ -105,6 +108,22 @@ export default Counter;
 - **DON'T:** Cause side effects
 - rarely used method in the updating phase
 
+Example: we add a method generateSeed() in App.js that allows us to pass any random seed value.
+```javascript
+static getDerivedStateFromProps(props, state){
+    //gives you a chance to copy any values from props that you maybe interested in transferring over to state
+    console.log('getDerivedStateFromProps')
+    if(props.seed && state.seed !== props.seed){
+        return{
+            seed: props.seed,
+            counter: props.seed
+        }
+    }
+    return null //if you don't want to change state
+}
+```
+![](img/getDerivedStateFromProps.gif)
+
 ### 2. shouldComponentUpdate(nextProps, nextState)
 - This method receives the updated props and state
 - Dictates if the component should re-render or not.
@@ -114,9 +133,33 @@ export default Counter;
 - **DON'T:** Cause side effects or call the setState() method.
 - rarely used lifecycle method.
 
+-To demonstrate this method, we pass an `ignoreProp` prop to the Counter. Normally when we click the button, render and componentDidUpdate is called. But, let's ay we want to ignore the ignoreProp, we don't want to render it as we're not rendering it to the UI(it does not  change anything on the screen).
+-So we create a condition inside `shouldComponentUpdate` method to tell React when its appropriate to not call render.
+```javascript
+shouldComponentUpdate(nextProps, nextState){
+    //we're not doing anything with ignoreProp, we're not rendering it to the UI, so we want to ignore it
+    if(nextProps.ignoreProp && this.props.ignoreProp !== nextProps.ignoreProp){
+        console.log("shouldComponentUpdate --- DO NOT RENDER")
+        return false;
+    }
+    console.log("shouldComponentUpdate --- RENDER")
+    return true;
+}
+```
+![](img/shouldComponentUpdate.gif)
+
 ### 3. render()
 - same description as in mounting lifecycle methods
 
 ### 4. getSnapshotBeforeUpdate(prevProps, prevState)
 - called right before the changes from the virtual DOM are to be reflected in the DOM.
-- **DO:** Capture some information from the DOM. Example: Read the
+- This method allows us to capture some properties that are not stored in the state before we re-render that component.
+- **DO:** Capture some information from the DOM. Example: Read the user's scroll position and after the update, maintain that scroll position by performing some calculations.
+- This method returns either null or returns a value. Returned value will be passed as the third parameter to the next method.
+- Rarely used method
+
+### 5.componentDidUpdate(prevProps, prevState, snapshot)
+- Called after the render is finished in the re-render cycles. This means you can be sure that the component and all its sub components have properly rendered itself after the update.
+- This method is guaranteed to be only called once in each re-render cycle.
+- **you can CAUSE SIDE EFFECTS**
+- So you can make ajax calls but before making the call you need to compare the prevProps the newProps and then decide whether to make the Ajax call or not.
