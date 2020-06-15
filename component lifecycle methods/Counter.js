@@ -11,6 +11,12 @@ class Counter extends Component {
          this.increment = () => this.setState({counter: this.state.counter + 1});
          this.decrement = () => this.setState({counter: this.state.counter - 1});
     }
+
+    componentDidMount(){
+        console.log("ComponentDidMount")
+        console.log("--------------------------------")
+    }
+
     static getDerivedStateFromProps(props, state){
         //gives you a chance to copy any values from props that you maybe interested in transferring over to state
         console.log('getDerivedStateFromProps')
@@ -22,10 +28,17 @@ class Counter extends Component {
         }
         return null //if you don't want to change state
     }
-    componentDidMount(){
-        console.log("ComponentDidMount")
-        console.log("--------------------------------")
+
+    shouldComponentUpdate(nextProps, nextState){
+        //we're not doing anything with ignoreProp, we're not rendering it to the UI, so we want to ignore it
+        if(nextProps.ignoreProp && this.props.ignoreProp !== nextProps.ignoreProp){
+            console.log("shouldComponentUpdate --- DO NOT RENDER")
+            return false;
+        }
+        console.log("shouldComponentUpdate --- RENDER")
+        return true;
     }
+
     render() { 
         console.log("Render");
         return ( 
