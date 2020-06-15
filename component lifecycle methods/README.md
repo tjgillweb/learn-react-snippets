@@ -5,6 +5,8 @@
 2. [Youtube: ReactJS Tutorial Codevolution](https://www.youtube.com/watch?v=qnN_FuFNq2g&list=PLC3y8-rFHvwgg3vaYJgHGnModB54rxOk3&index=22)
 3. [React Component Lifecycle - Hooks / Methods Explained](https://www.youtube.com/watch?v=m_mtV4YaI8c&t=1289s)
 
+A demo of the code snippet I've created to better understand component lifecycle methods:  
+
 ![](img/full-component-lifecycle.gif)
 
 ![](img/lifecycle-methods1.png)
@@ -133,8 +135,8 @@ static getDerivedStateFromProps(props, state){
 - **DON'T:** Cause side effects or call the setState() method.
 - rarely used lifecycle method.
 
--To demonstrate this method, we pass an `ignoreProp` prop to the Counter. Normally when we click the button, render and componentDidUpdate is called. But, let's ay we want to ignore the ignoreProp, we don't want to render it as we're not rendering it to the UI(it does not  change anything on the screen).
--So we create a condition inside `shouldComponentUpdate` method to tell React when its appropriate to not call render.
+- To demonstrate this method, we pass an `ignoreProp` prop to the Counter. Normally when we click the button, render and componentDidUpdate is called. But, let's ay we want to ignore the ignoreProp, we don't want to render it as we're not rendering it to the UI(it does not  change anything on the screen).
+- So we create a condition inside `shouldComponentUpdate` method to tell React when its appropriate to not call render.
 ```javascript
 shouldComponentUpdate(nextProps, nextState){
     //we're not doing anything with ignoreProp, we're not rendering it to the UI, so we want to ignore it
@@ -163,3 +165,10 @@ shouldComponentUpdate(nextProps, nextState){
 - This method is guaranteed to be only called once in each re-render cycle.
 - **you can CAUSE SIDE EFFECTS**
 - So you can make ajax calls but before making the call you need to compare the prevProps the newProps and then decide whether to make the Ajax call or not.
+
+----------------------------------------------------------------------------------------------------------------------------------------
+### Component Unmounting Lifecycle Method
+#### componentWillUnmount()
+- This method is invoked immediately before a component is unmounted and destroyed.
+- **DO:** Perform cleanup tasks like cancelling any network requests, removing event handlers, cancelling any subscriptions and invalidating timers.
+- **DON'T:** Call the setState() method. Because a component is never re-rendered after it has unmounted.
