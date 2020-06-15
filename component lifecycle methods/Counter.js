@@ -43,9 +43,14 @@ class Counter extends Component {
         console.log('getSnapshotBeforeUpdate')
         return null
     }
-    
+
     componentDidUpdate(prevProps, prevState, snapshot){
         console.log('componentDidUpdate')
+        console.log("--------------------------------")
+    }
+
+    componentWillUnmount(){
+        console.log('componentWillUnmount')
         console.log("--------------------------------")
     }
 
