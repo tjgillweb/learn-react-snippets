@@ -13,7 +13,7 @@ A demo of the code snippet I've created to better understand component lifecycle
 
 ![](img/lifecycle-methods2.png)
 
-## Mounting Lifecycle Methods
+## Mounting Phase Lifecycle Methods
 ### 1. constructor(props)
 - It is a special function that gets called whenever a new component is created.  
 - **USE this for:**  
@@ -103,7 +103,7 @@ export default Counter;
 
 ![](img/mounting_lifecycle.gif)
 ---------------------------------------------------------------------------------------------------------------------------------------
-## Component Updating Lifecycle Methods
+## Updating Phase Lifecycle Methods
 ### 1. static getDerivedStateFromProps(props,state)
 - This method is called every time a component is re-rendered.
 - **DO:** Set the state
@@ -172,3 +172,15 @@ shouldComponentUpdate(nextProps, nextState){
 - This method is invoked immediately before a component is unmounted and destroyed.
 - **DO:** Perform cleanup tasks like cancelling any network requests, removing event handlers, cancelling any subscriptions and invalidating timers.
 - **DON'T:** Call the setState() method. Because a component is never re-rendered after it has unmounted.
+
+## Error Handling Phase Lifecycle Methods
+These two methods are called when there is an error either during rendering, in a lifecycle method, or in the constructor of any child component.
+#### 1. static getDerivedStateFromError(error)
+#### 2. componentDidCatch(error, info)
+- This lifecycle method was added in React 16 and is used in error boundaries.
+- A component becomes an error boundary if it defines the componentDidCatch method.
+- In this method, `this.setState` can be called and used to catch an unhandled JavaScript error in a child component tree and display a fallback UI instead of the component that crashed. 
+- These errors are caught during rendering, in lifecycle methods, and in constructors of the whole tree below them. This is to ensure that an error in a child component does not break the whole app.
+
+> **NOTE:**  This method only catches errors in child components and not in the component itself.
+
