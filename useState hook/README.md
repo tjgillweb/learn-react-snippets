@@ -66,6 +66,7 @@ export default HookCounter;
 ```
 ### useState with previous state
 If the new state is computed using the previous state, you can pass a function to setState. The function will receive the previous value, and return an updated value. Here’s an example of a counter component that uses both forms of setState:
+#### HookCounterUpdated.js
 ```javascript
 import React, {useState} from 'react';
 
@@ -113,4 +114,50 @@ class ClassCounter extends Component {
   ...
 }
 ```
+### useState with object
+```Javascript
+#### HookCounterObject.js
+import React, {useState} from 'react';
+
+const HookCounterObject = () => {
+    const [name, setName] = useState({firstname: '', lastname: ''})
+    return ( 
+        <form>
+            <label>Firstname:</label>
+            <input 
+                type="text" 
+                value={name.firstname}
+                onChange={e => setName({firstname: e.target.value})}
+            />   
+            <label>Lastname:</label>
+            <input 
+                type="text" 
+                value={name.lastname}
+                onChange={e => setName({lastname: e.target.value})}
+            />
+            <h2>Your name is: {name.firstname} {name.lastname}</h2>
+            <h2>{JSON.stringify(name)}</h2>
+        </form> 
+    );
+}
+ 
+export default HookCounterObject;
+```
+The output of the above code looks like this: 
+
+![](img/useState_replace.gif)
+
+**PROBLEM:** as we start typing in the lastname, the firstname becomes empty and vice-versa.
+- To visualize what's going wrong we display the state variabe using `JSON.stringify(name)`
+- By default, we have both firstname and lastname set to empty strings.
+- When we start typing in the firstname, the lastname property is removed from the state variable and vice-versa.
+- The reason this happens is because ***useState does not automatically merge and update the object***. As opposed to this, `setState` merges the object you provide into the current state.
+- You have to merge the state manually. We will use the spread operator to merge the object in the onChange event handler like this:
+```javascript
+ onChange={e => setName({...name, firstname: e.target.value})}
+ onChange={e => setName({...name, lastname: e.target.value})}
+ ```
+ Now, you should be able to update the firstname and lastname without any problem.
+ 
+ ![](img/useStateObject.gif)
 
