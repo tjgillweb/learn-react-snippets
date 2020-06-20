@@ -64,6 +64,7 @@ const HookCounter = () => {
 }
 export default HookCounter;
 ```
+---------------------------------------------------------------------------------------------------------------------------------------
 ### useState with previous state
 If the new state is computed using the previous state, you can pass a function to setState. The function will receive the previous value, and return an updated value. Here’s an example of a counter component that uses both forms of setState:
 #### HookCounterUpdated.js
@@ -114,9 +115,10 @@ class ClassCounter extends Component {
   ...
 }
 ```
+---------------------------------------------------------------------------------------------------------------------------------------
 ### useState with object
-```Javascript
 #### HookCounterObject.js
+```Javascript
 import React, {useState} from 'react';
 
 const HookCounterObject = () => {
@@ -160,4 +162,35 @@ The output of the above code looks like this:
  Now, you should be able to update the firstname and lastname without any problem.
  
  ![](img/useStateObject.gif)
+ 
+---------------------------------------------------------------------------------------------------------------------------------------
+### useState with array
+#### HookCounterArray.js
+```javascript
+import React, {useState} from 'react';
 
+const HookCounterArray = () => {
+    const [items, setItems] = useState([])
+    const addItem = () => {
+        setItems([...items, {
+            id: items.length,
+            value: Math.floor(Math.random()*10) + 1
+        }])
+    }
+    return ( 
+        <div>
+            <button onClick={addItem}>Add a number</button>
+            <ul>
+              {
+                items.map(item => (
+                  <li key={item.id}>{item.value}</li>
+                ))
+              }
+            </ul>
+        </div>
+     );
+}
+ 
+export default HookCounterArray;
+```
+ ![](img/useStateArray.gif)
