@@ -167,7 +167,7 @@ const HookCounterOne = () => {
 export default HookCounterOne;
 ```
 ----------------------------------------------------------------------------------------------------------------------------------------
-## Run effects only once
+## Run effects only once (mimic componentDidMount)
 - How to run effect only once or how to mimic class component componentDidMount with useEffect and functional component.
 
 ### Class component implementation
@@ -219,7 +219,7 @@ const HookMouse = () => {
     useEffect(() => {
         console.log('useEffect called');
         window.addEventListener('mousemove', logMousePosition)
-    }, [])
+    })
     return ( 
         <div>
             Hooks X - {x} Y - {y}
@@ -244,4 +244,74 @@ useEffect(() => {
 }, []) //empty dependency array
 ```
 ![](img/useEffect-once2.gif)
+----------------------------------------------------------------------------------------------------------------------------------------
 
+## useEffect with cleanup (mimic componentWillUnmount)
+- In this example, we will create a container component for the `HookMouse.js` which we implemented in the last section.
+- We will create a button that will toggle the component's visibility.
+- The cleanup code can be cancelling subscriptions, timers or removing event handlers.
+
+```Javascript
+import React, { useState } from 'react';
+import HookMouse from './HookMouse';
+
+const MouseContainer = () => {
+    const [display, setDisplay] = useState(true)
+    return ( 
+        <div>
+            <button onClick={() => setDisplay(!display)}>Toggle display</button>
+            {display && <HookMouse />}
+        </div>
+     );
+}
+ 
+export default MouseContainer;
+```
+If we now call MouseContainer component in the App.js, we will se the output as shown below
+
+```Javascript
+import MouseContainer from './components/MouseContainer';
+function App() {
+  return (
+    <div className="App">
+      <MouseContainer />
+    </div>
+  );
+}
+```
+
+![](img/useEffect-cleanup1.gif)
+
+- When we click the Toggle Display button, it unmounts the HookMouse component from the DOM.
+- **PROBLEM:** When we move the mouse around, when the component is unmounted, we see a warning in the console and the mouse event is still being logged. So, ***even though the component has been removed, the event listener which belongs to theat component is still listening and executing***. It indicates a ***memory leak*** in your application as per the warning.
+- **SOLUTION:** ***When you unmount a component , make sure you cancel all your subscriptions and listeners i.e. run cleanup code***.
+
+### Cleanup in Class component
+To unmount the component from the DOM, we use `componentWillUnmount` lifecycle method in class components and we run the cleanup code here.
+#### ClassMouse.js
+```Javascript
+//cleanup code in class components
+componentWillUnmount() {
+    window.removeEventListener('mousemove', this.logMousePosition)
+}
+```
+### Cleanup in Functional component 
+- The function that is passed to useEffect can return a function which will be executed when the component will unmount.
+- So whatever you return is basically your cleanup function.
+- So, from this arrow function passed to useEffect, we return another cleanup function
+
+![](img/useEffect-cleanup2.gif)
+
+#### HookMouse.js
+```Javascript
+useEffect(() => {
+    console.log('useEffect called');
+    window.addEventListener('mousemove', logMousePosition)
+    
+    //cleanup code
+    return () => {
+        console.log('useEffect - component unmount')
+        window.removeEventListener('mousemove', logMousePosition)
+    }
+}, [])
+```
