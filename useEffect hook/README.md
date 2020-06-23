@@ -315,3 +315,155 @@ useEffect(() => {
     }
 }, [])
 ```
+----------------------------------------------------------------------------------------------------------------------------------------
+
+## useEffect with incorrect dependency
+- In this example, we're going to create a simple counter but this time its going to automatically increment every second.
+- Always think before specifying an empty dependency array.
+
+### Class Component Implemmentation
+#### IntervalClassCounter.js
+```Javascript
+import React, { Component } from 'react';
+
+class IntervalClassCounter extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { 
+            count: 0
+         }
+    }
+    componentDidMount() {
+        //place to create timers
+        this.interval = setInterval(this.tick, 1000)
+    }
+    componentWillUnmount() {
+        clearInterval(this.interval)
+    }
+    tick = () => {
+        this.setState({
+            count: this.state.count + 1
+        })
+    }
+    render() { 
+        return <h1>{this.state.count}</h1>;
+    }
+}
+ 
+export default IntervalClassCounter;
+```
+
+### Functional Component Implemmentation
+#### IntervalHookCounter.js
+```Javascript
+import React, { useState, useEffect } from 'react';
+const IntervalHookCounter = () => {
+    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+        const interval = setInterval(tick, 1000)
+
+        return () => {
+            clearInterval(interval)
+        }
+    }, []) // we pass an empty dependency array as it is componentDidMount equivalent of class component
+
+    const tick = () => {
+        setCount(count + 1)
+    }
+
+    return ( 
+        <div>
+            {count}
+        </div> 
+    );
+}
+ 
+export default IntervalHookCounter;
+```
+#### App.js
+```Javascript
+import IntervalClassCounter from './components/IntervalClassCounter';
+import IntervalHookCounter from './components/IntervalHookCounter';
+
+function App() {
+  return (
+    <div className="App">
+      <IntervalClassCounter />
+      <IntervalHookCounter />
+    </div>
+  );
+}
+```
+**PROBLEM:** When we run the code, the Class Counter works as expected, but the Hook Counter only display value of 1 and does not increment it every second.
+
+![](img/useEffect-incorrect-dependency.gif)
+
+- In our mind, the problem statement is simple. Create an interval once and destroy it once. So we created in componentDidMount and destroyed in componentWillUnmount.
+- I our Hook counter, we have just translated the class counter code, we have passed an empty dependency list to useEffect so that the timer is set only once and return function to destroy the timer that we created. Why then our counter doesn't work as expected?
+- The problem here is our mental model. Our mindset was to simply replicate componentDidMount. However, by specifying an empty array, we have basically told react to ignore watching for changes in the count variable.
+- In initial render, count value is 0, then setCount sets it to 1 and that is rendered in the browser. After that React does not watch for changes in the count value as we have passed an empty dependency array and only 1 is rendered through the different re-render cycles.
+> If you think dependency array is a way to specify when you want to rerun the effect, you're going to run into problems. Instead ***dependency array should be thought of as a way to let React know about everything that the effect must watch for changes***.
+
+**SOLUTION 1:** Add count as a dependency
+```Javascript
+useEffect(() => {
+    const interval = setInterval(tick, 1000)
+
+    return () => {
+        clearInterval(interval)
+    }
+}, [count]) 
+```
+**SOLUTION 2:** (Without the dependency list) In the tick function, we use the second form(functional) of setCount
+- Now, since setCount keeps track of the previous count value, we dont have to specify count as a dependency for the useEffect.
+```Javascript
+useEffect(() => {
+    const interval = setInterval(tick, 1000)
+
+    return () => {
+        clearInterval(interval)
+    }
+})
+
+const tick = () => {
+    setCount(prevCount => prevCount + 1) //second form of setCount
+}
+```
+----------------------------------------------------------------------------------------------------------------------------------------
+## Tips for using effects
+### TIP NO. 1:
+- Sometimes you might want to call a function within useEffect. It's very easy to forget that some prop is a dependency.
+- So, its recommended that whenever you need to call a function within useEffect, just define the function inside useEffect.  
+
+#### Not recommended
+```Javascript
+function doSomething(){
+    console.log(someProp)
+}
+useEffect(() => {
+    doSomething()
+    const interval = setInterval(tick, 1000)
+
+    return () => {
+        clearInterval(interval)
+    }
+})
+```
+
+#### Recommended way of calling function:
+- This way when you read through the effect, you're much more likely to see that you have a prop which has to be specified as a dependency.
+```Javascript
+useEffect(() => {
+    function doSomething(){
+        console.log(someProp)
+    }
+    doSomething()
+    const interval = setInterval(tick, 1000)
+
+    return () => {
+        clearInterval(interval)
+    }
+}, [someProp])
+```
+
