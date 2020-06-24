@@ -126,4 +126,47 @@ So, we are successfully able to  fetch an individual post by passing in the ID e
 - On every key pressed, the effect is triggered which executes another data fetching request. It would be better if we trigger the request on a button click.
 - When we type in the input field, we see the title, but when we press backspace and remove the ID, we see the API returns all the 100 posts as an array.
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Trigger effect on a button click
+Here we will fetch data on button click rather than onChange event which will solve the problems stated above.
+
+![](img/useEffect-data-fetching3.gif) 
+
+#### DataFetching.js
+```Javascript
+import React, {useState, useEffect} from 'react';
+import axios from 'axios'
+
+const DataFetching = () => {
+    const [post, setPost] = useState({})
+    const [id, setId] = useState(1)
+    const [idFromButtonClick, setIdFromButtonClick] = useState(1)
+
+    useEffect(() => {
+        axios
+            .get(`https://jsonplaceholder.typicode.com/posts/${id}`)
+            .then(res => {
+                console.log(res)
+                setPost(res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }, [idFromButtonClick])
+
+    const handleClick = () => {
+        setIdFromButtonClick(id)
+    }
+    return ( 
+        <div>
+            <input type="text" value={id} onChange={e => setId(e.target.value)}/>
+            <button onClick={handleClick}>Fetch Post</button>
+            <div>{post.title}</div>
+        </div>
+     );
+}
+ 
+export default DataFetching;
+```
 
