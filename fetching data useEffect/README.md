@@ -76,3 +76,54 @@ export default App;
 So, the final output after adding the empty dependency list looks like this:
 
 ![](img/useEffect-data-fetching1.png)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Fetching individual posts
+- Now we'll learn how to fetch individual posts by passing in the post id to the get request.
+- In the Routes section of the JSON Placeholder website, we have `/posts` which returns 100 posts and we also have `/posts/1` which returns a single post with post ID = 1.
+- So in order to retrieve an individual post by post ID, we just have to append /ID to the current URL we're using in our effect hook.
+- We'll create an input element that will accept a post ID from the user.
+- we'll need to set the value of the input element and listen to the onChange event to assign the value back to the input element.
+
+#### DataFetching.js
+```Javascript
+const DataFetching = () => {
+    // const [posts, setPosts] = useState([]) 
+    //1. change posts to post and set it to empty object instead of empty array
+    const [post, setPost] = useState({})
+    const [id, setId] = useState(1)
+
+    useEffect(() => {
+        axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`) //2. change the url to append the post id
+            .then(res => {
+                console.log(res)
+                setPost(res.data) //3. change setPosts to setPost
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }, [id]) //4. Add id to the dependency list
+    return ( 
+        <div>
+            { /* 5. Add an input button */ }
+            <input type="text" value={id} onChange={e => setId(e.target.value)}/>
+            <div>{post.title}</div>
+            { /* 6. comment out the code for displating posts data */ }
+            {/* <ul>
+                { 
+                    posts.map(post => <li key={post.id}>{post.title}</li>)
+                }
+            </ul> */}
+        </div>
+     );
+}
+```
+![](img/useEffect-data-fetching2.gif) 
+
+So, we are successfully able to  fetch an individual post by passing in the ID entered by the user. But there are some problems.
+
+**PROBLEMS:**  
+- On every key pressed, the effect is triggered which executes another data fetching request. It would be better if we trigger the request on a button click.
+- When we type in the input field, we see the title, but when we press backspace and remove the ID, we see the API returns all the 100 posts as an array.
+
+
