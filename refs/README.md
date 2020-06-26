@@ -82,3 +82,83 @@ class RefsDemo extends Component {
  
 export default RefsDemo;
 ```
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Refs with Class Components
+- In the last section we learned how to add refs to an HTML element. It is also possible to add a ref to a class component.
+- We can pass a ref from a Parent Component to a Child Component.
+- Create a new file `Input.js`. This component will be an implementation of what we learned in the previous section.
+- Then create a Parent Component for `Input.js` called `FocusInput.js`.
+
+**GOAL:** When we click on the button 'Focus Input' in the Parent Component(FocusInput.js), the input element in the Child Component(Input.js) should receive the focus. And we achieve that by using refs on the Input Component. 
+
+We have 3 steps to achieve that (check in FocusInput.js):
+1. Create a ref using the createRef() method in the Parent Component.
+2. Attach the ref to the component
+3. Add a clickHandler to the button, and within the clickHandler call the Child Component method(focusInput()) using the ref.
+
+#### Input.js(Child Component)
+```Javascript
+import React, { Component } from 'react';
+
+class Input extends Component {
+    constructor(props) {
+        super(props);
+        this.inputRef = React.createRef()
+    }
+
+    focusInput(){
+        this.inputRef.current.focus()
+    }
+    render() { 
+        return (
+            <div>
+                <input type="text" ref={this.inputRef} />
+            </div>
+          );
+    }
+}
+ 
+export default Input;
+```
+#### FocusInput.js(Parent Component)
+```Javascript
+import React, { Component } from 'react';
+import Input from './Input'
+
+class FocusInput extends Component {
+    constructor(props) {
+        super(props);
+        this.componentRef = React.createRef()
+    }
+
+    clickHandler = () => {
+        this.componentRef.current.focusInput() //focusInput method defined in Input.js
+    }
+    render() { 
+        return ( 
+            <div>
+                <Input ref={this.componentRef} />
+                <button onClick={this.clickHandler}>Focus Input</button>
+            </div>
+         );
+    }
+}
+ 
+export default FocusInput;
+```
+#### App.js
+```Javascript
+import React from 'react';
+import './App.css';
+import FocusInput from './components/FocusInput';
+
+function App() {
+  return (
+    <div>
+      <FocusInput />
+    </div>
+  );
+}
+```
+export default App;
