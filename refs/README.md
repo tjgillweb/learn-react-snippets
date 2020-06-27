@@ -86,7 +86,7 @@ export default RefsDemo;
 
 ## Refs with Class Components
 - In the last section we learned how to add refs to an HTML element. It is also possible to add a ref to a class component.
-- We can pass a ref from a Parent Component to a Child Component.
+- We can pass a ref from a Parent Component to a Child Component. The component has to be a Class Component. Refs cannot be attached to functional components.
 - Create a new file `Input.js`. This component will be an implementation of what we learned in the previous section.
 - Then create a Parent Component for `Input.js` called `FocusInput.js`.
 
@@ -160,5 +160,87 @@ function App() {
     </div>
   );
 }
-```
 export default App;
+```
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Forwarding Refs
+- Ref forwarding is a technique for automatically passing a ref through a component to one of its children.
+
+**GOAL:** (Same as previous section) When we click on the button 'Focus Input' in the Parent Component(FRParentInput.js), the input element in the Child Component(FRInput.js) should receive the focus.
+
+But unlike the last section, where the ref was pointing to the class component, in this section, we will use the Forwarding Ref technique to allow the Parent Component to directly reference the native input element.
+
+Create a functional component FRInput.js and a Class Component FRParentInput.js(Parent of FRInput)
+
+4 steps to achieve that:
+1. Create a ref in the Parent Component.
+2. Attach the ref to the Child Component using the ref attribute.
+3. Forward this ref to the input element in the Child Component. And ref forwarding can be achieved by using the `forwardRef` method from the React library.
+
+- In FRInput.js rewrite the functional component using arrow function(if its a normal function). To forward a ref, we will use `React.forwardRef` method. The method will be assigned to the constant.
+- The forwardRef() method takes in a component as its parameter. So, the arrow function is passed as a parameter to the forwardRef() method.
+- We know that every functional component receives props as its parameter. But when a component is passed as a parameter to the createRef() method, it receives the ref attribute as its second parameter. We can use this ref parameter and pass it as a value to the ref attribute on the native input element. 
+- This ref parameter will point to the value of ref attribute from the Parent Component. In other words, the ref is being forwarded from the Parent Component to the native input element.
+
+4. Define the clickHandler in the Parent Component(FRParentInput.js)
+
+#### FRParentInput.js(Parent Component)
+```Javascript
+import React, { Component } from 'react';
+import FRInput from './FRInput';
+
+class FRParentInput extends Component {
+    constructor(props) {
+        super(props);
+        this.inputRef = React.createRef()
+    }
+    clickHandler = () => {
+        // Because we're using forwardRef technique, 
+       // `this.inputRef.current` points to the native input element and not the FRInput component instance.
+        this.inputRef.current.focus()
+    }
+    render() { 
+        return ( 
+            <div>
+                <FRInput ref={this.inputRef} />
+                <button onClick={this.clickHandler}>Focus Input</button>
+            </div>
+         );
+    }
+}
+ 
+export default FRParentInput;
+```
+
+#### FRInput.js(Child Component)
+```Javascript
+import React from 'react';
+
+const FRInput = React.forwardRef((props, ref) => {
+    return ( 
+        <div>
+            <input type="text" ref={ref}/>
+        </div>
+     );
+})
+ 
+export default FRInput;
+```
+
+#### App.js
+```Javascript
+import React from 'react';
+import './App.css';
+import FRParentInput from './components/FRParentInput';
+
+function App() {
+  return (
+    <div>
+      <FRParentInput />
+    </div>
+  );
+}
+
+export default App;
+```
