@@ -1,7 +1,7 @@
 # Higher Order Components
-- HOC is a pattern where a function accepts a component as an argument and returns a new(enhanced) component.
+- HOC is a pattern where a function accepts a component as an argument and returns a new(enhanced) component.   
 ``` const NewComponent = higherOrderComponent(originalComponent)```
-- HOC adds additional data or functionality to the originalComponent so that the NewComponent can also be referred as Enhanced Component.
+- HOC adds additional data or functionality to the originalComponent so that the NewComponent can also be referred as Enhanced Component.   
 ``` const EnhancedComponent = higherOrderComponent(originalComponent)```
 - The HOC pattern is used to share common functionality between components without having to repeat the code.
 
