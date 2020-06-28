@@ -216,3 +216,71 @@ function App() {
 export default App;
 
 ```
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Passing Down Props in HOC
+- If you pass down a prop from App.js, the prop is passed down to the HOC but not to the component that is wrapped.
+- ***When you create HOC's, it is important to pass down the rest of the props(using spread operator)***.
+- To demonstrate, let's pass a 'name' prop on the Click Counter Component(in App.js)   
+```Javascript
+<div className="App">
+  <ClickCounter name='Elon' />
+  <HoverCounter />
+</div>
+```
+- In ClickCounter, we will render the name prop
+```Javascript
+render(){
+....
+    <button onClick={incrementCount}>{this.props.name} Clicked {count} times</button>
+...
+```
+
+- If we check the browser, the name 'Elon' is not displayed. And this is a common mistake that happenss when you start off with HOC's.
+- The problem is when we specify props on the ClickCounter component, the props are sent down to HOC and not to ClickCounter.
+- If we `console.log(this.props.name)` in the HOC render method, we can see the name in the console for the ClickCounter, and undefined for HoverCounter.
+
+- To fix this issue, we need to pass down the remaining props to the WrappedComponent using the spread operator.
+- So, the HOC adds two props to the WrappedComponent(count and incrementCount) and then simply passes down whatever remaining props have been specified.
+```Javascript
+render() {
+    console.log(this.props.name);
+    return (
+        <WrappedComponent 
+            count={this.state.count} 
+            incrementCount={this.incrementCount} 
+            {...this.props}
+        />
+    )
+}
+```
+
+## Passing Parameters to the HOC
+- In our HOC, let's say instead of incrementing the count value by 1, we want to increment it by different numbers for both the components(ClickCounter and HoverCounter).
+- We can do that by passing a parameter to the HOC function.
+- So, the arrow function will no have two parameters: the first one is WrappedComponent, and the second one `incrementNumber`.
+- Then, instead of incrementing the count by 1, we will increment it by `incrementNumber`.
+- And then pass a second argument of 5 in the ClickCounter and 10 in the HoverCounter.
+```Javascript
+    export default withCounter(ClickCounter, 5);
+    export default withCounter(HoverCounter, 10);
+```
+- Now when we click, increment is in the multiples of 5, and when we hover, increment is in the multiples of 10.
+
+#### withCounter.js
+```Javascript
+const withCounter = (WrappedComponent, incrementNumber) => {
+    class WithCounter extends React.Component {
+        constructor(props) {
+            ...
+        }
+
+        incrementCount = () => {
+            this.setState(prevState => {
+                return { count: prevState.count + incrementNumber }
+            })
+        }
+        ...
+    }
+}
+```
