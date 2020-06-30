@@ -6,9 +6,9 @@ import {UserProvider} from './components/userContext'
 function App() {
   return (
     <div className="App">
-    <UserProvider value="Evan">
+    {/* <UserProvider value="Evan"> */}
       <ComponentC />
-    </UserProvider>
+    {/* </UserProvider> */}
     </div>
   );
 }
