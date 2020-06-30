@@ -99,3 +99,96 @@ export default ComponentF;
 1. ***Create the context:*** (in userContext.js) using the React.createContext method. Be sure to export the provider and consumer components as well.
 2. ***Provide a context value:*** (in App.js) At the top level, include the provider component and provide a value using the value attribute. This value can now be consumed by any of the descendant components.
 3. ***Consume the context value:*** (in ComponentF.js) In the component where username is required, use the Consumer Component and pass in a function as its child. The function receives the context value as its parameter which can then be used to return the desired JSX. You can choose to just display it or use it for some rendering logic.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Setting Default Value for Context
+
+- We can set a default value to our context and the default value is set while creating the context.
+- It is passed as an argument to the createContext method.
+- The default value will only be used if a component does not have a matching Provider above it in the component tree.
+#### In userContext.js
+```Javascript
+const UserContext = React.createContext('SpaceX')
+```
+
+#### In App.js 
+```Javascript
+return (
+    <div className="App">
+    //comment out the UserProvider
+    {/* <UserProvider value="Evan"> */}
+      <ComponentC />
+    {/* </UserProvider> */}
+    </div>
+  );
+```
+- You will be able to see the message 'Hello SpaceX' in the browser.
+
+## The contextType Property
+
+- There is another way to consume context value instead of using the Consumer component using the contextType property on a class.
+- Lets see how that works by consuming the userContext value in ComponentE 
+- First step, in userContext.js, we need to export the userContext itself.
+```Javascript
+    export default UserContext;
+```
+- Second step, assign the userContext to the contextType property on the class. 
+```Javascript
+import React, { Component } from 'react';
+import ComponentF from './ComponentF';
+import UserContext from './userContext'
+
+class ComponentE extends Component {
+    render() { 
+        return (
+            <div>
+                Component E context {this.context}
+                <ComponentF />
+            </div>
+        );
+    }
+}
+ComponentE.contextType = UserContext
+
+export default ComponentE;
+```
+- Now, ComponentE is also able to use the context and render the username.
+- If your application supports the public class field syntax, you can replace `componentE.contextType` with `static contextType` and application still works the same.
+```Javascript
+class ComponentE extends Component {
+    static contextType = UserContext
+    render() { 
+        return (
+            <div>
+                Component E context {this.context}
+                <ComponentF />
+            </div>
+        );
+    }
+}
+```
+There are two limitations to using contextType:
+1. It only works with class components. 
+2. You can only subscribe to a single context using contextType 
+
+## Consuming Multiple Contexts
+- We have two contexts ThemeContext and UserContext
+- ThemeContext.Consumer accepts a function as a child passing in the theme value.
+- Within the function body, we have another function as a child which provides the UserContext value.
+- Both of them are then passed as props to a component.
+```Javascript
+function Content(){
+    return (
+        <ThemeContext.Consumer>
+        {theme => (
+            <UserContext.Consumer>
+            {user => (
+                <ProfilePage user={user} theme={theme} />
+            )}
+            </UserContext.Consumer>
+        )}
+        </ThemeContext.Consumer>
+    );
+}
+```
