@@ -1,6 +1,6 @@
 # React and HTTP
 
-![](img/HTTTPReact.png)
+![](img/HTTPReact.png)
 
 - Lets learn How HTTP requests are generally handled in a React application. We need to understand the basic scenarios of making get and post requests from our React application.
 - When we build a web application(a React app), we need to reach out to the server to fetch some data or send some data based on user interaction.
@@ -21,6 +21,8 @@
 1. Import the Axios Library
 2. Create a state property to store the list of posts
 3. Use axios to make a GET request to the JSONPlaceholder API inside componentDidMount Lifecycle Method.
+
+![](img/HTTPGet.png)
 
 #### PostList.js
 ```Javascript
@@ -80,5 +82,91 @@ function App() {
 }
 
 export default App;
+```
 
+## HTTP Post
+- Lets see how to POST data to an API from our React Application.
+- We'll create three input fields, each for userId, title and body.
+- We will store the data in the state object and make a POST request on click of the submit button. 
+- By using the name attribute, we don't have to have separate handlers for each input. 
+
+![](img/HTTPPost.png)
+
+#### PostForm.js
+```Javascript
+import React, { Component } from 'react';
+
+class PostForm extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { 
+            userId: '',
+            title: '',
+            body: '',
+         }
+    }
+    changeHandler = e => {
+        this.setState({ [e.target.name]: e.target.value})
+    }
+    submitHandler = e => {
+        e.preventDefault()
+        console.log(this.state)
+        axios.post('https://jsonplaceholder.typicode.com/posts', this.state)
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+    render() { 
+        const { userId, title, body } = this.state
+        return ( 
+            <form onSubmit={this.submitHandler}>
+                <div>
+                    <input 
+                        type="text" 
+                        name="userId" 
+                        value={userId} 
+                        onChange={this.changeHandler}
+                    />
+                </div>
+                <div>
+                    <input 
+                        type="text" 
+                        name="title" 
+                        value={title} 
+                        onChange={this.changeHandler}
+                    />
+                </div>
+                <div>
+                    <input 
+                        type="text" 
+                        name="body" 
+                        value={body}
+                        onChange={this.changeHandler} 
+                    />
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+         );
+    }
+}
+ 
+export default PostForm;
+```
+
+#### App.js
+```Javascript
+import PostForm from './components/PostForm';
+
+function App() {
+  return (
+    <div className="App">
+      <PostForm />
+    </div>
+  );
+}
+
+export default App;
 ```
