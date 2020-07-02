@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserContext } from '../App'
+import { UserContext, OrganizationContext } from '../App'
 
 const ComponentF = () => {
     return ( 
@@ -7,7 +7,20 @@ const ComponentF = () => {
             <UserContext.Consumer>
                 {
                     user => {
-                        return <div>User context value {user}</div>
+                        return (
+                            <OrganizationContext.Consumer>
+                                {
+                                    organization => {
+                                        return (
+                                            <div>
+                                                <h2>User context value {user}</h2>
+                                                <h3>Organization context value {organization}</h3>
+                                            </div>
+                                        )
+                                    }
+                                }
+                            </OrganizationContext.Consumer>
+                        )
                     }
                 }
             </UserContext.Consumer>
