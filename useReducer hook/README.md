@@ -219,7 +219,7 @@ const CounterTwo = () => {
 export default CounterTwo;
 ```
 
-***Scenario 2 - state as an object ***
+***Scenario 2 - By using state as an object we are able to keep track of multiple state variables***
 
 **Example:** Suppose you want to maintain two different counters. We can do this easily if our state is an object. We simply add another property to our state.
 - Add a second property to our state initialState as `secondCounter: 10`
