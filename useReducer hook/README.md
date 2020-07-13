@@ -173,3 +173,102 @@ const CounterTwo = () => {
  
 export default CounterTwo;
 ```
+
+### What is the advantage of using this particular pattern? 
+***Scenario 1 - By making action as an object, we can use additional data in the reducer function***
+
+**Example:** We want to increment/decrement the count by a value(right now the value is 1). We want to add two more buttons 'Increment 5' and 'Decrement 5'. We can do this easily when action is an object.
+
+Right now, our action object has just the one property which is action `type`. We can add a second property called `value` which should be the number to increment or decrement the counter.
+- So, for the existing buttons, we set the value property to 1. For the 'Increment/Decrement 5' buttons, we will set the value property to 5.
+
+#### CounterTwo.js
+```Javascript
+import React, {useReducer} from 'react';
+
+const initialState = {
+    firstCounter: 0
+}
+const reducer = (state, action) => {
+    //return newState
+    switch(action.type){
+        case 'increment':
+            return { firstCounter: state.firstCounter + action.value }
+        case 'decrement':
+            return { firstCounter: state.firstCounter - action.value }
+        case 'reset':
+            return initialState
+        default:
+            return state
+    }
+}
+const CounterTwo = () => {
+    const [count, dispatch] = useReducer(reducer, initialState)
+    return ( 
+        <div>
+            <h2>Count - {count.firstCounter}</h2>
+            <button onClick={() => dispatch({type: 'increment', value: 1})}>Increment</button>
+            <button onClick={() => dispatch({type: 'decrement', value: 1})}>Decrement</button>
+            <button onClick={() => dispatch({type: 'increment', value: 5})}>Increment 5</button>
+            <button onClick={() => dispatch({type: 'decrement', value: 5})}>Decrement 5</button>
+            <button onClick={() => dispatch({type: 'reset'})}>Reset</button>
+        </div>
+     );
+}
+ 
+export default CounterTwo;
+```
+
+***Scenario 2 - state as an object ***
+
+**Example:** Suppose you want to maintain two different counters. We can do this easily if our state is an object. We simply add another property to our state.
+- Add a second property to our state initialState as `secondCounter: 10`
+- To change the secondCounter value, we will create two more switch cases increment2 and decrement2 which are for the secondCounter.
+- Now we have two properties in the state object when changing only one at a time. To get the expected output, we have to modify the return statements to merge the state properties(using the spread operator).
+
+#### CounterTwo.js
+```Javascript
+import React, {useReducer} from 'react';
+
+const initialState = {
+    firstCounter: 0,
+    secondCounter: 10
+}
+const reducer = (state, action) => {
+    //return newState
+    switch(action.type){
+        case 'increment':
+            return { ...state, firstCounter: state.firstCounter + action.value }
+        case 'decrement':
+            return { ...state, firstCounter: state.firstCounter - action.value }
+        case 'increment2':
+            return { ...state, secondCounter: state.secondCounter + action.value }
+        case 'decrement2':
+            return { ...state, secondCounter: state.secondCounter - action.value }
+        case 'reset':
+            return initialState
+        default:
+            return state
+    }
+}
+const CounterTwo = () => {
+    const [count, dispatch] = useReducer(reducer, initialState)
+    return ( 
+        <div>
+            <h2>First Counter - {count.firstCounter}</h2>
+            <h2>Second Counter - {count.secondCounter}</h2>
+            <button onClick={() => dispatch({type: 'increment', value: 1})}>Increment</button>
+            <button onClick={() => dispatch({type: 'decrement', value: 1})}>Decrement</button>
+            <button onClick={() => dispatch({type: 'increment', value: 5})}>Increment 5</button>
+            <button onClick={() => dispatch({type: 'decrement', value: 5})}>Decrement 5</button>
+            <button onClick={() => dispatch({type: 'reset'})}>Reset</button>
+            <div>
+                <button onClick={() => dispatch({type: 'increment2', value: 1})}>Increment Counter 2</button>
+                <button onClick={() => dispatch({type: 'decrement2', value: 1})}>Decrement Counter 2</button>
+            </div>
+        </div>
+     );
+}
+ 
+export default CounterTwo;
+```
