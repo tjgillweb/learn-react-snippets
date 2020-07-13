@@ -99,3 +99,77 @@ const CounterOne = () => {
  
 export default CounterOne;
 ```
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## useReducer (complex state & action)
+- Instead of making use of a simple state and action, we will be using a state object and an action object.
+- Create a new file CounterTwo.js and copy the code of CounterOne.js inside it and rename the component to CounterTwo.
+
+#### CHANGES IN CounterTwo.js
+1. Convert simple numeric state into an object. The object initialCount will contain a property called firstCounter which is 0. And update the count value in JSX
+```Javascript
+   const initialState = {
+       firstCounter: 0
+   }
+   // In JSX
+   <h2>Count - {count.firstCounter}</h2>
+```
+2. Convert simple string action into an object. The object will contain a property called type which is a string.
+```Javascript
+   const reducer = (state, action) => {
+     switch(action.type){
+    ...
+    }
+   // In JSX
+   <button onClick={() => dispatch({type: 'increment'})}>Increment</button>
+   <button onClick={() => dispatch({type: 'decrement'})}>Decrement</button>
+   <button onClick={() => dispatch({type: 'reset'})}>Reset</button>
+```
+3. For increment and decrement actions, we now need to return the new state object.
+```Javascript
+    switch(action.type){
+        case 'increment':
+            return { firstCounter: state.firstCounter + 1 }
+        case 'decrement':
+            return { firstCounter: state.firstCounter - 1}
+        case 'reset':
+            return initialState
+        default:
+            return state
+    }
+```
+
+#### CounterTwo.js
+```Javascript
+import React, {useReducer} from 'react';
+
+const initialState = {
+    firstCounter: 0
+}
+const reducer = (state, action) => {
+    //return newState
+    switch(action.type){
+        case 'increment':
+            return { firstCounter: state.firstCounter + 1 }
+        case 'decrement':
+            return { firstCounter: state.firstCounter - 1}
+        case 'reset':
+            return initialState
+        default:
+            return state
+    }
+}
+const CounterTwo = () => {
+    const [count, dispatch] = useReducer(reducer, initialState)
+    return ( 
+        <div>
+            <h2>Count - {count.firstCounter}</h2>
+            <button onClick={() => dispatch({type: 'increment'})}>Increment</button>
+            <button onClick={() => dispatch({type: 'decrement'})}>Decrement</button>
+            <button onClick={() => dispatch({type: 'reset'})}>Reset</button>
+        </div>
+     );
+}
+ 
+export default CounterTwo;
+```
