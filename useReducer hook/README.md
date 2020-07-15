@@ -272,3 +272,59 @@ const CounterTwo = () => {
  
 export default CounterTwo;
 ```
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Multiple useReducers
+- In the last section, we maintained a state object to track two different counters. To update the second counter, we also had to create additional switch cases in the reducer function.
+- This works fine, but if we need two counters with the exact same state transitions, there is a much simpler alternative to use multiple usereducer hooks.
+- Create CounterThree.js and copy the code from CounterOne.js and change the component names.
+
+ - The first counter will be the already written code in CounterOne.js. Now we need to add another counter.
+ - The second counter will also have the same state transitions - increment, decrement or reset.
+ - If this is the screnario, we can easily create additional counters by simply specifying multiple useReducers.
+ - So, right after first useReducer, we can call another useReducer. And then make necessary changes in the JSX.
+ - If we take a look at the browser, we can see ***two counters both working independently even though they use the same piece of code***.
+ - So, ***when dealing with multiple state variables that have the same state transitions, it is a good idea to have multiple useReducers*** making use of the same reducer function.
+ - This will avoid the complexity of merging the state if it were to be an object and also prevents us from duplicating code in the reducer function(like in CounterTwo). 
+ 
+ ![](img/multiple_useReducers.gif)
+ 
+ #### CounterThree.js
+```Javascript
+import React, {useReducer} from 'react';
+
+const initialState = 0
+const reducer = (state, action) => {
+    //return newState
+    switch(action){
+        case 'increment':
+            return state + 1
+        case 'decrement':
+            return state - 1
+        case 'reset':
+            return initialState
+        default:
+            return state
+    }
+}
+const CounterThree = () => {
+    const [count, dispatch] = useReducer(reducer, initialState)
+    const [countTwo, dispatchTwo] = useReducer(reducer, initialState)
+    return ( 
+        <div>
+            <h2>Counter One - {count}</h2>
+            <button onClick={() => dispatch('increment')}>Increment</button>
+            <button onClick={() => dispatch('decrement')}>Decrement</button>
+            <button onClick={() => dispatch('reset')}>Reset</button>
+            <div>
+                <h2>Counter Two - {countTwo}</h2>
+                <button onClick={() => dispatchTwo('increment')}>Increment</button>
+                <button onClick={() => dispatchTwo('decrement')}>Decrement</button>
+                <button onClick={() => dispatchTwo('reset')}>Reset</button>
+            </div>
+        </div>
+     );
+}
+ 
+export default CounterThree;
+```
