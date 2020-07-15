@@ -226,6 +226,8 @@ export default CounterTwo;
 - To change the secondCounter value, we will create two more switch cases increment2 and decrement2 which are for the secondCounter.
 - Now we have two properties in the state object when changing only one at a time. To get the expected output, we have to modify the return statements to merge the state properties(using the spread operator).
 
+![](img/useReducer_multiple_state.gif)
+
 #### CounterTwo.js
 ```Javascript
 import React, {useReducer} from 'react';
